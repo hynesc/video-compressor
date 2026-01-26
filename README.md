@@ -13,7 +13,7 @@ This is a self-hosted instance of [8mb.local](https://github.com/JMS1717/8mb.loc
 
 ## Management Commands
 
-Run these commands from this directory (`/home/chris/projects/video-compressor`).
+Run these commands from the project directory.
 
 ### Start
 Start the service in the background:
