@@ -20,10 +20,18 @@ This is a customized self-hosted instance of [8mb.local](https://github.com/JMS1
 ### 3. Clean Filenames
 *   Output files are named: `OriginalName_compressed.mp4`
 
-## Access & usage
+## Access & Usage
 
-- **URL:** http://localhost:8001
+- **URL:** [http://localhost:8001](http://localhost:8001) (or `http://<your-ip>:8001` on your LAN)
 - **Status:** Running (Docker)
+
+## GPU support
+
+This instance is configured to use **NVIDIA GPUs** automatically.
+To verify GPU access inside the container:
+```bash
+sudo docker exec -it 8mblocal nvidia-smi
+```
 
 ## Management Commands
 
