@@ -567,28 +567,34 @@ def compress_video(self, job_id: str, input_path: str, output_path: str, target_
     quality_flags = []
     
     # Default Quality Value (Lower = Better). 
-    # 24 is a "High Efficiency" balance (Prevents file size explosion on re-encodes).
-    crf_value = "24" 
+    # 28 is a Balanced Web Quality (Targets smaller file sizes).
+    crf_value = "28" 
 
     if actual_encoder.endswith("_nvenc"):
         # NVENC: Use Variable Bitrate with Constant Quality target
-        # MAX EFFICIENCY MODE:
-        # - p7: Slowest/Best Preset
+        # BALANCED WEB OPTIMIZED MODE (Safe/Fast/Small)
+        # - p6: Slower (Better quality)
         # - multipass 2: Full Resolution Two-Pass
-        # - rc-lookahead 32: Look ahead 32 frames for better bit distribution
-        # - temporal-aq 1: Adaptive Quantization over time
-        # - spatial-aq 1: Adaptive Quantization within frames
+        # - rc-lookahead 32: Standard lookahead
+        # - b_ref_mode middle: Standard B-frame referencing
+        # - weighted_pred 1: Better transitions
+        # - highbitdepth 0: Standard 8-bit compatibility
+        # - temporal-aq 1 / spatial-aq 0 / aq-strength 4: Tamer bit allocation (prevents bloat)
         quality_flags = [
             "-rc:v", "vbr", 
             "-cq:v", crf_value, 
             "-b:v", "0",
-            "-preset", "p7",
+            "-preset", "p6",
             "-multipass", "2",
             "-rc-lookahead", "32",
+            "-b_ref_mode", "middle",
+            "-weighted_pred", "1",
+            "-highbitdepth", "0",
             "-temporal-aq", "1",
-            "-spatial-aq", "1"
+            "-spatial-aq", "0",
+            "-aq-strength", "4"
         ]
-        _publish(self.request.id, {"type": "log", "message": f"Mode: MAX QUALITY (NVENC CQ {crf_value} + p7 + Multipass)"})
+        _publish(self.request.id, {"type": "log", "message": f"Mode: BALANCED WEB (NVENC CQ {crf_value} + p6 + 8-bit)"})
         
     elif actual_encoder in ("libx264", "libx265", "libaom-av1", "libsvtav1"):
         # CPU Encoders: Use CRF + VerySlow
