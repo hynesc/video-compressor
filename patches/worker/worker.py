@@ -572,14 +572,16 @@ def compress_video(self, job_id: str, input_path: str, output_path: str, target_
 
     if actual_encoder.endswith("_nvenc"):
         # NVENC: Use Variable Bitrate with Constant Quality target
-        # BALANCED WEB OPTIMIZED MODE (Safe/Fast/Small)
-        # - p6: Slower (Better quality)
+        # ADVANCED BALANCED MODE
+        # - p6: High quality preset
         # - multipass 2: Full Resolution Two-Pass
         # - rc-lookahead 32: Standard lookahead
-        # - b_ref_mode middle: Standard B-frame referencing
+        # - b_ref_mode 1: Each (Max B-frame efficiency)
         # - weighted_pred 1: Better transitions
-        # - highbitdepth 0: Standard 8-bit compatibility
-        # - temporal-aq 1 / spatial-aq 0 / aq-strength 4: Tamer bit allocation (prevents bloat)
+        # - highbitdepth 0: Standard 8-bit
+        # - temporal-aq 0: Disabled (Requested for stability)
+        # - spatial-aq 1: Enabled (Saves bits)
+        # - aq-strength 4: Low strength
         quality_flags = [
             "-rc:v", "vbr", 
             "-cq:v", crf_value, 
@@ -587,14 +589,14 @@ def compress_video(self, job_id: str, input_path: str, output_path: str, target_
             "-preset", "p6",
             "-multipass", "2",
             "-rc-lookahead", "32",
-            "-b_ref_mode", "middle",
+            "-b_ref_mode", "1",
             "-weighted_pred", "1",
             "-highbitdepth", "0",
-            "-temporal-aq", "1",
-            "-spatial-aq", "0",
+            "-temporal-aq", "0",
+            "-spatial-aq", "1",
             "-aq-strength", "4"
         ]
-        _publish(self.request.id, {"type": "log", "message": f"Mode: BALANCED WEB (NVENC CQ {crf_value} + p6 + 8-bit)"})
+        _publish(self.request.id, {"type": "log", "message": f"Mode: ADVANCED WEB (NVENC CQ {crf_value} + p6 + B-Ref Each)"})
         
     elif actual_encoder in ("libx264", "libx265", "libaom-av1", "libsvtav1"):
         # CPU Encoders: Use CRF + VerySlow
