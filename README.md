@@ -30,21 +30,43 @@ This is a customized self-hosted instance of [8mb.local](https://github.com/JMS1
 ### 5. Network Hot Folder (The "Magic" Batch Mode)
 For seamless batch processing from another computer (e.g., your laptop):
 
-1.  **Connect to Share:**
+1.  **Security (Encrypted Vault):**
+    The hotfolder is now **Encrypted at Rest** using `gocryptfs`. You must mount it before use.
+    
+    *   **First Run (Setup):**
+        ```bash
+        # Initialize the vault (Set a password)
+        gocryptfs -init .hotfolder_cipher
+        ```
+    *   **Mount the Folder:**
+        ```bash
+        ./mount_hotfolder.sh
+        # Enter your password when prompted
+        ```
+
+2.  **Connect to Share:**
     *   Connect to `\\<SERVER_IP>\VideoCompressor` (SMB).
-    *   **User:** `chris`
+    *   **User:** `chris` (Crucial: Encrypted mounts are only visible to the user who mounted them).
     *   **Password:** `video123` (Default).
-2.  **Usage:**
+
+3.  **Usage:**
     *   Drop files into the `hotfolder/input` folder.
     *   The system picks them up automatically.
     *   Finished files appear in `hotfolder/output`.
     *   **Note:** Original files are deleted from `input` after processing starts.
-3.  **Start the Watcher:**
+
+4.  **Start the Watcher:**
     Run this on the server to start the background monitoring script:
     ```bash
     nohup python3 auto_compressor.py > auto_compressor.log 2>&1 &
     ```
     (View logs with `tail -f auto_compressor.log`)
+
+## Security & Encryption
+This project uses `gocryptfs` to encrypt the hotfolder.
+- **Data Location:** Encrypted data is stored in `.hotfolder_cipher`.
+- **Mount Point:** Unencrypted files appear in `hotfolder/` only when mounted.
+- **Dependencies:** `sudo apt install gocryptfs`
 
 ## Access & Usage
 

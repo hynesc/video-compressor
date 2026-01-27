@@ -3,3 +3,5 @@ outputs/
 .env
 .DS_Store
 hotfolder/
+.hotfolder_cipher/
+*.log
