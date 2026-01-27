@@ -5,9 +5,15 @@ services:
     ports:
       - "8001:8001"
     volumes:
-      - ./uploads:/app/uploads
-      - ./outputs:/app/outputs
       - ./.env:/app/.env
+      # Mount patched files for Quality Mode and UI Banner
+      - ./patches/worker/worker.py:/app/worker/worker.py
+      - ./patches/frontend-build/index.html:/app/frontend-build/index.html
+    
+    # Store uploads and outputs in RAM (tmpfs) for privacy
+    tmpfs:
+      - /app/uploads
+      - /app/outputs
     
     # Enable NVIDIA GPU support
     deploy:

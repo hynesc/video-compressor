@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+  <!-- Use a single SVG favicon; SVG scales crisply and keeps build simple -->
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    
+		<link rel="modulepreload" href="/_app/immutable/entry/start.1td6xUyj.js">
+		<link rel="modulepreload" href="/_app/immutable/chunks/D4G7XV4W.js">
+		<link rel="modulepreload" href="/_app/immutable/chunks/U2DDJ_0W.js">
+		<link rel="modulepreload" href="/_app/immutable/chunks/BPGtCBdR.js">
+		<link rel="modulepreload" href="/_app/immutable/entry/app.DD4jNqmx.js">
+		<link rel="modulepreload" href="/_app/immutable/chunks/CY5WxPnE.js">
+		<link rel="modulepreload" href="/_app/immutable/chunks/BZqCPlBW.js">
+		<link rel="modulepreload" href="/_app/immutable/chunks/DI9HNUez.js">
+		<link rel="modulepreload" href="/_app/immutable/chunks/GEKKL5lm.js">
+		<link rel="modulepreload" href="/_app/immutable/chunks/D33e11yZ.js">
+		<link rel="modulepreload" href="/_app/env.js">
+  </head>
+  <body data-sveltekit-preload-data="hover">
+    <!-- GEMINI PATCH: QUALITY MODE BANNER -->
+    <div style="background: #e63946; color: white; text-align: center; padding: 10px; font-family: sans-serif; font-weight: bold; font-size: 14px; position: relative; z-index: 10000; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+      ⚠️ QUALITY-BASED COMPRESSION ACTIVE (Target size is ignored; CRF/CQ 23 used for all encodes)
+    </div>
+    <!-- END PATCH -->
+    <div style="display: contents">
+			<script>
+				{
+					__sveltekit_pylvsi = {
+						base: "",
+						env: null
+					};
+
+					const element = document.currentScript.parentElement;
+
+					import("/_app/env.js").then(({ env }) => {
+						__sveltekit_pylvsi.env = env;
+
+						Promise.all([
+							import("/_app/immutable/entry/start.1td6xUyj.js"),
+							import("/_app/immutable/entry/app.DD4jNqmx.js")
+						]).then(([kit, app]) => {
+							kit.start(app, element);
+						});
+					});
+				}
+			</script>
+		</div>
+  </body>
+</html>
