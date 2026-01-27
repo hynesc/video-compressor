@@ -566,24 +566,39 @@ def compress_video(self, job_id: str, input_path: str, output_path: str, target_
     
     quality_flags = []
     
-    # Default Quality Value (Lower = Better). 23 is standard "Medium/High".
-    # You can adjust this value: 18 (High), 23 (Medium), 28 (Low)
-    crf_value = "23" 
+    # Default Quality Value (Lower = Better). 
+    # 24 is a "High Efficiency" balance (Prevents file size explosion on re-encodes).
+    crf_value = "24" 
 
     if actual_encoder.endswith("_nvenc"):
         # NVENC: Use Variable Bitrate with Constant Quality target
-        quality_flags = ["-rc:v", "vbr", "-cq:v", crf_value, "-b:v", "0"]
-        _publish(self.request.id, {"type": "log", "message": f"Mode: Quality-Based (NVENC CQ {crf_value})"})
+        # MAX EFFICIENCY MODE:
+        # - p7: Slowest/Best Preset
+        # - multipass 2: Full Resolution Two-Pass
+        # - rc-lookahead 32: Look ahead 32 frames for better bit distribution
+        # - temporal-aq 1: Adaptive Quantization over time
+        # - spatial-aq 1: Adaptive Quantization within frames
+        quality_flags = [
+            "-rc:v", "vbr", 
+            "-cq:v", crf_value, 
+            "-b:v", "0",
+            "-preset", "p7",
+            "-multipass", "2",
+            "-rc-lookahead", "32",
+            "-temporal-aq", "1",
+            "-spatial-aq", "1"
+        ]
+        _publish(self.request.id, {"type": "log", "message": f"Mode: MAX QUALITY (NVENC CQ {crf_value} + p7 + Multipass)"})
         
     elif actual_encoder in ("libx264", "libx265", "libaom-av1", "libsvtav1"):
-        # CPU Encoders: Use CRF
-        quality_flags = ["-crf", crf_value]
-        # x264/x265 conflict if both -b:v and -crf are present, so we ONLY add CRF
-        _publish(self.request.id, {"type": "log", "message": f"Mode: Quality-Based (CPU CRF {crf_value})"})
+        # CPU Encoders: Use CRF + VerySlow
+        # Note: We include preset here so we can ignore the UI preset later
+        quality_flags = ["-crf", crf_value, "-preset", "veryslow"]
+        _publish(self.request.id, {"type": "log", "message": f"Mode: Quality-Based (CPU CRF {crf_value} + VerySlow)"})
         
     elif actual_encoder.endswith("_qsv"):
-        # Intel QSV: ICQ (Intelligent Constant Quality) if available, or CQP
-        quality_flags = ["-global_quality", crf_value]
+        # Intel QSV: ICQ + VerySlow
+        quality_flags = ["-global_quality", crf_value, "-preset", "veryslow"]
         _publish(self.request.id, {"type": "log", "message": f"Mode: Quality-Based (QSV Global Quality {crf_value})"})
         
     else:
@@ -595,9 +610,14 @@ def compress_video(self, job_id: str, input_path: str, output_path: str, target_
         _publish(self.request.id, {"type": "log", "message": "Mode: Targeted Size (Hardware specific quality mode not implemented)"})
 
     if actual_encoder.endswith("_nvenc") or actual_encoder in ("libx264", "libx265", "libaom-av1", "libsvtav1") or actual_encoder.endswith("_qsv"):
+         # Note: We append preset_flags last, but for NVENC we hardcoded p7 above. 
+         # We need to make sure we don't duplicate flags.
+         # The easiest way is to NOT add *preset_flags for NVENC in this block, or let ffmpeg pick the last one.
+         # FFmpeg usually uses the last flag if duplicated. 
+         # But to be safe, we rely on our hardcoded flags in quality_flags.
+         
          cmd += [
             *quality_flags,
-            *preset_flags,
             *tune_flags,
         ]
     else:
