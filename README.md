@@ -12,13 +12,20 @@ This is a customized self-hosted instance of [8mb.local](https://github.com/JMS1
 
 ### 2. Quality Mode (Ignore Target Size)
 *   **Target Size is Ignored:** The "Target Size (MB)" box in the UI has no effect on file size.
-*   **Constant Quality:** All encodes use **CRF 23** (Medium/High Quality) or equivalent.
-    *   Files will be as large as they need to be to maintain quality.
-    *   **Recommendation:** UNCHECK "Auto" resolution to preserve 1080p/4K quality.
-*   **Active Encoders:** This logic applies to NVENC, x264, x265, and QSV.
+*   **Profile:** **"Stable Web Optimized"** (NVENC)
+    *   **Quality:** **CQ 28** (Significantly smaller files, Web-ready quality).
+    *   **Preset:** **P6** (High Efficiency).
+    *   **Multipass:** **1** (Quarter-Res Two-Pass).
+    *   **Lookahead:** **32 Frames**.
+*   **Recommendation:** UNCHECK "Auto" resolution to preserve 1080p/4K quality.
+*   **Active Encoders:** This logic applies to NVENC (optimized), x264, x265, and QSV.
 
 ### 3. Clean Filenames
 *   Output files are named: `OriginalName_compressed.mp4`
+
+### 4. Batch Processing
+*   The web interface supports **Concurrent Processing** (configured to 10 parallel jobs).
+*   **To queue multiple videos:** Open the page in **multiple browser tabs** and upload one video per tab. They will process in parallel.
 
 ## Access & Usage
 
