@@ -27,6 +27,25 @@ This is a customized self-hosted instance of [8mb.local](https://github.com/JMS1
 *   The web interface supports **Concurrent Processing** (configured to 10 parallel jobs).
 *   **To queue multiple videos:** Open the page in **multiple browser tabs** and upload one video per tab. They will process in parallel.
 
+### 5. Network Hot Folder (The "Magic" Batch Mode)
+For seamless batch processing from another computer (e.g., your laptop):
+
+1.  **Connect to Share:**
+    *   Connect to `\\<SERVER_IP>\VideoCompressor` (SMB).
+    *   **User:** `chris`
+    *   **Password:** `video123` (Default).
+2.  **Usage:**
+    *   Drop files into the `hotfolder/input` folder.
+    *   The system picks them up automatically.
+    *   Finished files appear in `hotfolder/output`.
+    *   **Note:** Original files are deleted from `input` after processing starts.
+3.  **Start the Watcher:**
+    Run this on the server to start the background monitoring script:
+    ```bash
+    nohup python3 auto_compressor.py > auto_compressor.log 2>&1 &
+    ```
+    (View logs with `tail -f auto_compressor.log`)
+
 ## Access & Usage
 
 - **URL:** [http://localhost:8001](http://localhost:8001) (or `http://<your-ip>:8001` on your LAN)
