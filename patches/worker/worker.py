@@ -959,7 +959,8 @@ def compress_video(self, job_id: str, input_path: str, output_path: str, target_
     retry_attempt = self.request.retries or 0
     max_retries = 2  # Maximum 2 retry attempts
     
-    if size_overage_percent > 2.0 and final_size_mb > target_size_mb and retry_attempt < max_retries:
+    # GEMINI PATCH: Disable retry logic (Quality Mode ignores size targets)
+    if False and size_overage_percent > 2.0 and final_size_mb > target_size_mb and retry_attempt < max_retries:
         # Calculate if retry is feasible
         # If we need to reduce bitrate below 50%, it's probably impossible
         reduction_factor = max(0.5, 1.0 - (size_overage_percent / 100.0) - 0.05)
