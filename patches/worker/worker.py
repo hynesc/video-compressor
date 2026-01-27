@@ -572,31 +572,21 @@ def compress_video(self, job_id: str, input_path: str, output_path: str, target_
 
     if actual_encoder.endswith("_nvenc"):
         # NVENC: Use Variable Bitrate with Constant Quality target
-        # ADVANCED BALANCED MODE
+        # STABLE WEB OPTIMIZED MODE (Safe/Fast/Small)
         # - p6: High quality preset
-        # - multipass 2: Full Resolution Two-Pass
+        # - multipass 1: Quarter-Resolution Two-Pass (Safer than fullres)
         # - rc-lookahead 32: Standard lookahead
-        # - b_ref_mode 1: Each (Max B-frame efficiency)
-        # - weighted_pred 1: Better transitions
-        # - highbitdepth 0: Standard 8-bit
-        # - temporal-aq 0: Disabled (Requested for stability)
-        # - spatial-aq 1: Enabled (Saves bits)
-        # - aq-strength 4: Low strength
+        # - cq 28: Small file size target
         quality_flags = [
             "-rc:v", "vbr", 
             "-cq:v", crf_value, 
             "-b:v", "0",
             "-preset", "p6",
-            "-multipass", "2",
+            "-multipass", "1",
             "-rc-lookahead", "32",
-            "-b_ref_mode", "1",
-            "-weighted_pred", "1",
-            "-highbitdepth", "0",
-            "-temporal-aq", "0",
-            "-spatial-aq", "1",
-            "-aq-strength", "4"
+            "-highbitdepth", "0"
         ]
-        _publish(self.request.id, {"type": "log", "message": f"Mode: ADVANCED WEB (NVENC CQ {crf_value} + p6 + B-Ref Each)"})
+        _publish(self.request.id, {"type": "log", "message": f"Mode: STABLE WEB (NVENC CQ {crf_value} + p6 + Multipass 1)"})
         
     elif actual_encoder in ("libx264", "libx265", "libaom-av1", "libsvtav1"):
         # CPU Encoders: Use CRF + VerySlow
