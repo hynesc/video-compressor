@@ -1,5 +1,7 @@
 #!/bin/bash
-MOUNT_POINT="/home/chris/projects/video-compressor/hotfolder"
+# Get the absolute path of the directory containing this script
+BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+MOUNT_POINT="$BASE_DIR/hotfolder"
 PID_FILE=".auto_compressor.pid"
 
 echo "🔒 Locking (Unmounting) Hot Folder..."

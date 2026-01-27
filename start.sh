@@ -1,6 +1,8 @@
 #!/bin/bash
-CIPHER_DIR="/home/chris/projects/video-compressor/.hotfolder_cipher"
-MOUNT_POINT="/home/chris/projects/video-compressor/hotfolder"
+# Get the absolute path of the directory containing this script
+BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+CIPHER_DIR="$BASE_DIR/.hotfolder_cipher"
+MOUNT_POINT="$BASE_DIR/hotfolder"
 
 echo "🔓 Unlocking Hot Folder..."
 

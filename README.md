@@ -57,10 +57,10 @@ Run this to decrypt the folder, start Docker, and enable the network share:
 ./start.sh
 ```
 
-#### Connect (From Laptop)
+#### Connect (From Client Machine)
 *   **Address:** `\\<SERVER_IP>\VideoCompressor`
-*   **User:** `chris`
-*   **Password:** `video123`
+*   **User:** `<YOUR_SMB_USER>`
+*   **Password:** `<YOUR_SMB_PASSWORD>`
 *   **Usage:** Drop files in `input`, get results in `output`.
 
 #### Lock & Stop (All Systems)
@@ -115,6 +115,6 @@ tail -f auto_compressor.log
 
 The configuration is managed via patched files mounted into the Docker container:
 - `docker-compose.yml`: Defines the RAM disk and volume mounts.
-- `patches/worker/worker.py`: Contains the Quality Mode logic (CRF 23).
+- `patches/worker/worker.py`: Contains the Quality Mode logic (CQ 28).
 - `patches/backend/main.py`: Contains the `_compressed` naming logic.
 - `patches/frontend-build/index.html`: Contains the red warning banner.
