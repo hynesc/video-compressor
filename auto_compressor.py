@@ -7,8 +7,15 @@ import concurrent.futures
 from pathlib import Path
 
 # --- CONFIGURATION ---
-INPUT_DIR = Path("hotfolder/input")
-OUTPUT_DIR = Path("hotfolder/output")
+# Get the absolute path of the directory containing this script
+BASE_DIR = Path(__file__).parent.resolve()
+INPUT_DIR = BASE_DIR / "hotfolder" / "input"
+OUTPUT_DIR = BASE_DIR / "hotfolder" / "output"
+
+# Ensure directories exist
+INPUT_DIR.mkdir(parents=True, exist_ok=True)
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
 API_URL = "http://localhost:8001/api"
 MAX_CONCURRENT_JOBS = 5  # We have 10 workers, but let's keep it safe
 POLL_INTERVAL = 5  # Seconds between folder scans

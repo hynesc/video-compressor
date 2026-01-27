@@ -15,7 +15,18 @@ if [ ! -f "$CIPHER_DIR/gocryptfs.conf" ]; then
     exit 1
 fi
 
+# Ensure Mount Point exists (it might be ignored by git)
+if [ ! -d "$MOUNT_POINT" ]; then
+    echo "Creating mount point..."
+    mkdir -p "$MOUNT_POINT"
+fi
+
+# Security: Ensure the raw encrypted data is only readable by the owner
+chmod 700 "$CIPHER_DIR"
+
 echo "Mounting Encrypted Hotfolder..."
-gocryptfs "$CIPHER_DIR" "$MOUNT_POINT"
+# -allow_other: Enables SMB/Network sharing
+gocryptfs -allow_other "$CIPHER_DIR" "$MOUNT_POINT"
 
 echo "Done. Access your files in '$MOUNT_POINT'."
+
