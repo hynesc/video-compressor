@@ -8,6 +8,7 @@ services:
       - ./.env:/app/.env
       # Mount patched files for Quality Mode and UI Banner
       - ./patches/worker/worker.py:/app/worker/worker.py
+      - ./patches/backend/main.py:/app/backend/main.py
       - ./patches/frontend-build/index.html:/app/frontend-build/index.html
     
     # Store uploads and outputs in RAM (tmpfs) for privacy
