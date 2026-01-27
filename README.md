@@ -1,63 +1,56 @@
-# 8mb.local Video Compressor
+# 8mb.local Video Compressor (Custom Quality Edition)
 
-This is a self-hosted instance of [8mb.local](https://github.com/JMS1717/8mb.local), a GPU-accelerated video compressor.
+This is a customized self-hosted instance of [8mb.local](https://github.com/JMS1717/8mb.local). It has been modified for **maximum privacy**, **RAM-only operation**, and **Quality-Based compression**.
 
-## Status & Access
+## ⚠️ Important Changes
 
-- **URL:** http://localhost:8001 (or `http://<your-ip>:8001` on your LAN)
+### 1. Privacy First (RAM Disk)
+*   **No Hard Drive Storage:** `uploads/` and `outputs/` are stored in **RAM (tmpfs)**.
+*   **Auto-Wipe:** All videos are instantly deleted if the container stops or the computer restarts.
+*   **Host Folders:** The local `uploads/` and `outputs/` folders in this directory are unused and empty.
+*   **Workflow:** You MUST download your files via the Web UI immediately after processing.
+
+### 2. Quality Mode (Ignore Target Size)
+*   **Target Size is Ignored:** The "Target Size (MB)" box in the UI has no effect on file size.
+*   **Constant Quality:** All encodes use **CRF 23** (Medium/High Quality) or equivalent.
+    *   Files will be as large as they need to be to maintain quality.
+    *   **Recommendation:** UNCHECK "Auto" resolution to preserve 1080p/4K quality.
+*   **Active Encoders:** This logic applies to NVENC, x264, x265, and QSV.
+
+### 3. Clean Filenames
+*   Output files are named: `OriginalName_compressed.mp4`
+
+## Access & usage
+
+- **URL:** http://localhost:8001
 - **Status:** Running (Docker)
-- **Data:**
-  - `uploads/`: Temporary storage for uploaded source videos.
-  - `outputs/`: Storage for compressed videos.
-  - `.env`: Configuration file (environment variables).
 
 ## Management Commands
 
-Run these commands from the project directory.
-
 ### Start
-Start the service in the background:
 ```bash
 sudo docker compose up -d
 ```
 
-### Stop
-Stop the service:
+### Stop (Wipes all data)
 ```bash
 sudo docker compose down
 ```
 
-### Restart
-Restart the service (useful after changing configuration):
+### Restart (Applies patches)
 ```bash
 sudo docker compose restart
 ```
 
 ### View Logs
-Watch the logs in real-time (press `Ctrl+C` to exit):
 ```bash
 sudo docker compose logs -f
 ```
 
 ## Configuration
 
-### File Retention
-By default, files are deleted **1 hour** after creation. 
-
-To change this, add the following line to your `.env` file (e.g., for 24 hours):
-```bash
-FILE_RETENTION_HOURS=24
-```
-Then restart the container:
-```bash
-sudo docker compose restart
-```
-
-*Note: You can also change this dynamically in the Web UI Settings.*
-
-### GPU Support
-This instance is configured to use **NVIDIA GPUs** automatically.
-To verify GPU access inside the container:
-```bash
-sudo docker exec -it 8mblocal nvidia-smi
-```
+The configuration is managed via patched files mounted into the Docker container:
+- `docker-compose.yml`: Defines the RAM disk and volume mounts.
+- `patches/worker/worker.py`: Contains the Quality Mode logic (CRF 23).
+- `patches/backend/main.py`: Contains the `_compressed` naming logic.
+- `patches/frontend-build/index.html`: Contains the red warning banner.
