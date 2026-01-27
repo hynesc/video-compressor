@@ -2,7 +2,6 @@ import os
 import time
 import requests
 import shutil
-import subprocess
 import concurrent.futures
 from pathlib import Path
 
@@ -132,10 +131,10 @@ def process_file(file_path):
                     
         print(f"[SUCCESS] Saved to {final_output_path}")
 
-        # 5. Cleanup Input (Secure Shred)
-        print(f"[SHRED] Securely wiping input file...")
-        subprocess.run(["shred", "-u", str(file_path)], check=True)
-        print(f"[CLEAN] Securely removed input file.")
+        # 5. Cleanup Input
+        print(f"[CLEAN] Removing input file...")
+        file_path.unlink()
+        print(f"[CLEAN] Successfully removed input file.")
 
     except Exception as e:
         print(f"[ERROR] Failed to process {filename}: {e}")

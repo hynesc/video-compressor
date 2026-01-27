@@ -12,6 +12,9 @@ mkdir -p "$MOUNT_POINT"
 gocryptfs -allow_other "$CIPHER_DIR" "$MOUNT_POINT"
 
 if [ $? -eq 0 ]; then
+    # Create structure immediately
+    mkdir -p "$MOUNT_POINT/input"
+    mkdir -p "$MOUNT_POINT/output"
     echo "✅ Successfully unlocked! Network share is live."
 else
     echo "❌ Failed to mount."
