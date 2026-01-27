@@ -1,32 +1,18 @@
 #!/bin/bash
-# Mounts the encrypted hotfolder
+CIPHER_DIR="/home/chris/projects/video-compressor/.hotfolder_cipher"
+MOUNT_POINT="/home/chris/projects/video-compressor/hotfolder"
 
-# Get the directory where this script is located
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+echo "🔓 Unlocking Hot Folder..."
 
-CIPHER_DIR="$SCRIPT_DIR/.hotfolder_cipher"
-MOUNT_POINT="$SCRIPT_DIR/hotfolder"
+# Create mount point if missing
+mkdir -p "$MOUNT_POINT"
 
-# Check if vault is initialized
-if [ ! -f "$CIPHER_DIR/gocryptfs.conf" ]; then
-    echo "Error: Vault not initialized."
-    echo "Run this command first to set your password:"
-    echo "  gocryptfs -init \"$CIPHER_DIR\""
-    exit 1
-fi
-
-# Ensure Mount Point exists (it might be ignored by git)
-if [ ! -d "$MOUNT_POINT" ]; then
-    echo "Creating mount point..."
-    mkdir -p "$MOUNT_POINT"
-fi
-
-# Security: Ensure the raw encrypted data is only readable by the owner
-chmod 700 "$CIPHER_DIR"
-
-echo "Mounting Encrypted Hotfolder..."
-# -allow_other: Enables SMB/Network sharing
+# Mount with allow_other for Samba access
+# Note: You might need to edit /etc/fuse.conf and uncomment 'user_allow_other'
 gocryptfs -allow_other "$CIPHER_DIR" "$MOUNT_POINT"
 
-echo "Done. Access your files in '$MOUNT_POINT'."
-
+if [ $? -eq 0 ]; then
+    echo "✅ Successfully unlocked! Network share is live."
+else
+    echo "❌ Failed to mount."
+fi

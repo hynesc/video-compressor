@@ -29,52 +29,53 @@ This is a customized self-hosted instance of [8mb.local](https://github.com/JMS1
 
 ## 🔒 Security Architecture (Privacy & Encryption)
 
-This project is engineered for **Zero-Retention Privacy**:
+This project uses a hybrid privacy model:
 
-1.  **RAM-Only Processing:**
-    *   The core video compressor runs in Docker using a RAM Disk (`tmpfs`).
-    *   Temporary video data *never* touches the hard drive.
-    *   If power is lost, all active job data vanishes instantly.
+1.  **Processing Engine (RAM-Only):**
+    *   The Docker container runs on a RAM Disk (`tmpfs`).
+    *   Video data *during compression* never touches the hard drive.
+    *   If you use the Web UI directly, the entire pipeline is RAM-only.
 
-2.  **Encrypted Hot Folder (At Rest):**
-    *   The "Hot Folder" storage is encrypted using `gocryptfs`.
-    *   **Encrypted:** `projects/video-compressor/.hotfolder_cipher` (On Disk).
-    *   **Decrypted:** `projects/video-compressor/hotfolder` (Virtual Mount).
-    *   **Access Control:** The folder is locked to your user (`chmod 700`), preventing other local users from peeking.
-
-3.  **Secure Deletion (Shredding):**
-    *   After a file is uploaded to the RAM disk, the original input file is **securely shredded**.
-    *   The script uses `shred -u` to overwrite the file with random noise before deletion.
-    *   Since the underlying storage is encrypted, this overwrites the *encrypted* blocks with *encrypted* noise, making recovery impossible.
+2.  **Hot Folder (Encrypted Disk):**
+    *   If you use the Batch/Network workflow, files reside in `hotfolder/`.
+    *   **Storage:** This folder is an **Encrypted Vault** (`gocryptfs`).
+    *   **At Rest:** When unmounted (locked), files are essentially random noise on the disk.
+    *   **In Use:** When mounted (unlocked), files are visible to you and the compressor script.
+    *   **Cleanup:** The script securely shreds the *input* file after uploading it to the RAM engine.
 
 ---
 
 ### 5. Network Hot Folder (The "Magic" Batch Mode)
-For seamless batch processing from another computer (e.g., your laptop):
 
-1.  **Setup (One Time):**
-    *   **Install:** `sudo apt install gocryptfs`
-    *   **Initialize:** `gocryptfs -init .hotfolder_cipher` (Set a strong password).
+#### Setup (One Time)
+1.  **Install:** `sudo apt install gocryptfs`
+2.  **Initialize:** `gocryptfs -init .hotfolder_cipher` (Set a strong password).
 
-2.  **Mount (Every Reboot):**
-    *   Run: `./mount_hotfolder.sh`
-    *   This mounts the folder and enables SMB sharing (`allow_other`) while keeping it private (`chmod 700`).
+#### Unlock & Mount (To Start)
+Run this to decrypt the folder and enable the network share:
+```bash
+./mount_hotfolder.sh
+```
 
-3.  **Connect to Share:**
-    *   Connect to `\\<SERVER_IP>\VideoCompressor` (SMB).
-    *   **User:** `chris` (You must connect as the user who mounted the folder).
-    *   **Password:** `video123` (Default).
+#### Connect (From Laptop)
+*   **Address:** `\\<SERVER_IP>\VideoCompressor`
+*   **User:** `chris`
+*   **Password:** `video123`
+*   **Usage:** Drop files in `input`, get results in `output`.
 
-4.  **Usage:**
-    *   Drop files into the `hotfolder/input` folder.
-    *   Finished files appear in `hotfolder/output`.
+#### Lock & Unmount (To Finish)
+Run this to close the vault and secure the data:
+```bash
+./unmount_hotfolder.sh
+```
+*(Note: You must stop accessing the folder over the network before locking)*
 
-5.  **Start the Watcher:**
-    Run this on the server to start the background monitoring script:
-    ```bash
-    nohup python3 auto_compressor.py > auto_compressor.log 2>&1 &
-    ```
-    (View logs with `tail -f auto_compressor.log`)
+#### Start the Watcher
+To automatically process files dropped in the folder:
+```bash
+nohup python3 auto_compressor.py > auto_compressor.log 2>&1 &
+```
+(View logs: `tail -f auto_compressor.log`)
 
 ## Access & Usage
 
