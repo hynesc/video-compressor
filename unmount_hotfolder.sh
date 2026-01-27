@@ -12,11 +12,18 @@ fi
 # Stop Samba to release locks (optional but safer)
 # sudo systemctl stop smbd
 
+# Wipe all data before locking (this also deletes the encrypted source files)
+echo "🧹 Wiping all data from hotfolder..."
+rm -rf "$MOUNT_POINT"/*
+
 # Unmount
 fusermount -u "$MOUNT_POINT"
 
 if [ $? -eq 0 ]; then
-    echo "✅ Successfully locked! Data is now encrypted in .hotfolder_cipher"
+    # Clean up any leftover files in the mount point directory itself (unencrypted residue)
+    # This ensures the folder is empty for the next mount and no data is left behind.
+    find "$MOUNT_POINT" -mindepth 1 -delete
+    echo "✅ Successfully locked and all data wiped!"
 else
     echo "❌ Failed to unmount. Is a file open?"
     echo "Try closing Explorer windows or stopping the auto_compressor.py script."
