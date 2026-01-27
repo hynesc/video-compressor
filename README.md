@@ -51,10 +51,10 @@ This project uses a hybrid privacy model:
 1.  **Install:** `sudo apt install gocryptfs`
 2.  **Initialize:** `gocryptfs -init .hotfolder_cipher` (Set a strong password).
 
-#### Unlock & Mount (To Start)
-Run this to decrypt the folder and enable the network share:
+#### Unlock & Start (All Systems)
+Run this to decrypt the folder, start Docker, and enable the network share:
 ```bash
-./mount_hotfolder.sh
+./start.sh
 ```
 
 #### Connect (From Laptop)
@@ -63,19 +63,18 @@ Run this to decrypt the folder and enable the network share:
 *   **Password:** `video123`
 *   **Usage:** Drop files in `input`, get results in `output`.
 
-#### Lock & Unmount (To Finish)
-Run this to close the vault and secure the data:
+#### Lock & Stop (All Systems)
+Run this to stop all services, wipe the RAM-only data, and secure the vault:
 ```bash
-./unmount_hotfolder.sh
+./stop.sh
 ```
 *(Note: You must stop accessing the folder over the network before locking)*
 
-#### Start the Watcher
-To automatically process files dropped in the folder:
+#### Monitoring
+The auto-compressor script starts automatically with `./start.sh`. To view live logs:
 ```bash
-nohup python3 auto_compressor.py > auto_compressor.log 2>&1 &
+tail -f auto_compressor.log
 ```
-(View logs: `tail -f auto_compressor.log`)
 
 ## Access & Usage
 
@@ -92,24 +91,24 @@ sudo docker exec -it 8mblocal nvidia-smi
 
 ## Management Commands
 
-### Start
+### Start Everything
 ```bash
-sudo docker compose up -d
+./start.sh
 ```
 
-### Stop (Wipes all data)
+### Stop Everything
 ```bash
-sudo docker compose down
+./stop.sh
 ```
 
-### Restart (Applies patches)
-```bash
-sudo docker compose restart
-```
-
-### View Logs
+### View Logs (Docker)
 ```bash
 sudo docker compose logs -f
+```
+
+### View Logs (Watcher)
+```bash
+tail -f auto_compressor.log
 ```
 
 ## Configuration
