@@ -5,3 +5,4 @@ outputs/
 hotfolder/
 .hotfolder_cipher/
 *.log
+*.pid

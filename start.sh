@@ -33,7 +33,7 @@ if [ $? -eq 0 ]; then
 
     # 3. Start Docker Services
     echo "🚀 Starting Docker containers..."
-    docker-compose up -d
+    docker compose up -d
 
     # 4. Start Auto-Compressor script in background
     echo "🤖 Starting auto-compressor script..."

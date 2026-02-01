@@ -20,7 +20,7 @@ fi
 
 # 2. Stop Docker Services
 echo "🐳 Stopping Docker containers..."
-docker-compose down
+docker compose down
 
 # 3. Check if mounted
 if ! mountpoint -q "$MOUNT_POINT"; then
