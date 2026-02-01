@@ -114,10 +114,10 @@ def process_file(file_path):
         # Actually, since we are ON THE SERVER (same machine), 
         # the output file is in the Docker Container's RAM.
         # We cannot access it directly via file system unless we are root looking into overlayfs.
-                # We MUST download it via API.
-                
-                download_url = f"{API_URL}/jobs/{task_id}/download"
-                print(f"[DOWN] Downloading result...")        
+        # We MUST download it via API.
+        
+        download_url = f"{API_URL}/jobs/{task_id}/download"
+        print(f"[DOWN] Downloading result...")        
         # Extract original stem to name it properly
         original_stem = Path(filename).stem
         final_output_name = f"{original_stem}_compressed.mp4"
