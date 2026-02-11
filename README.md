@@ -76,6 +76,17 @@ The auto-compressor script starts automatically with `./start.sh`. To view live 
 tail -f auto_compressor.log
 ```
 
+#### Auto-Compressor Tuning (Optional)
+The hotfolder watcher waits for files to be stable (not still being copied) before uploading.
+You can override a few settings via environment variables:
+- `VC_MAX_CONCURRENT_JOBS` (default: 5)
+- `VC_POLL_INTERVAL_S` (default: 5)
+- `VC_READY_MIN_AGE_S` (default: 4)
+- `VC_REQUEST_TIMEOUT_S` (default: 60)
+- `VC_STREAM_READ_TIMEOUT_S` (default: 600)
+- `VC_DOWNLOAD_READ_TIMEOUT_S` (default: 300)
+- `VC_SECURE_DELETE=1` (best-effort secure delete of inputs using `shred` when available; otherwise falls back to unlink)
+
 ## Access & Usage
 
 - **URL:** [http://localhost:8001](http://localhost:8001) (or `http://<your-ip>:8001` on your LAN)

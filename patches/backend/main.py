@@ -408,7 +408,7 @@ async def compress(req: CompressRequest):
     import uuid
     task_id = str(uuid.uuid4())
     
-    # Use task_id in output filename to prevent concurrent jobs from overwriting each other
+    # Clean output filename for download UX:
     # Format: originalname_compressed.ext (e.g., "video_compressed.mp4")
     output_name = f"{stem}_compressed{ext}"
     output_path = OUTPUTS_DIR / output_name
@@ -650,9 +650,9 @@ async def download(task_id: str, wait: float | None = None):
             ext = ".mp4" if container == "mp4" else ".mkv"
             # Reconstruct output filename like in /api/compress
             stem = Path(uploaded_name).stem
-            if len(stem) > 37 and len(stem) >= 37 and stem[36] == '_':
+            if len(stem) > 37 and stem[36] == '_':
                 stem = stem[37:]
-            output_name = stem + "_8mblocal" + ext
+            output_name = stem + "_compressed" + ext
             candidate = OUTPUTS_DIR / output_name
             if candidate.is_file():
                 filename = os.path.basename(candidate)

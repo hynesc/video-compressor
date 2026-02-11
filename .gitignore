@@ -8,3 +8,8 @@ __pycache__/
 *.pyc
 *.log
 *.pid
+*.part
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
