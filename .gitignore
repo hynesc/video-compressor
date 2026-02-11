@@ -4,5 +4,7 @@ outputs/
 .DS_Store
 hotfolder/
 .hotfolder_cipher/
+__pycache__/
+*.pyc
 *.log
 *.pid
